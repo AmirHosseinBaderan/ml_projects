@@ -15,20 +15,30 @@ movie_matrix = df.pivot_table(
     values='rating'
 )
 
-# test 
-toy_story = movie_matrix['Toy Story (1995)']
+movie_stats = df.groupby('title')['rating'].agg(
+    ['mean', 'count']
+)
 
-similar_movies = movie_matrix.corrwith(toy_story)
 
-corr_df = pd.DataFrame(similar_movies,columns=['correlation'])
-corr_df.dropna(inplace=True)
+def recommend(movie_name):
+    movie_ratings = movie_matrix[movie_name]
+    
+    similar_movies = movie_matrix.corrwith(movie_ratings)
+    corr_df = pd.DataFrame(similar_movies,columns=['correlation'])
+    
+    corr_df.dropna(inplace=True)
+    recommendatoions = corr_df.join(
+        movie_stats['count']
+    )
+    
+    recommendatoions = recommendatoions[recommendatoions['count'] > 100]
+    recommendatoions = recommendatoions.sort_values(
+        'correlation',
+        ascending=False
+    )
+    
+    return recommendatoions.head(10)
 
-# quality filter
-movie_stats = df.groupby('title')['rating'].agg(['mean','count'])
-
-recommendations = corr_df.join(movie_stats['count'])
-# filter recommendations
-recommendations = recommendations[recommendations['count'] > 100]
-
-rec_items = recommendations.sort_values('correlation',ascending=False).head(10)
-print(rec_items)
+movie = input('movie name : ')
+recommendations = recommend(movie_name=movie)
+print(recommendations)
