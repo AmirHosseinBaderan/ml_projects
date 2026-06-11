@@ -25,20 +25,31 @@ def recommend(movie_name):
     movie_ratings = movie_matrix[movie_name]
     
     similar_movies = movie_matrix.corrwith(movie_ratings)
-    corr_df = pd.DataFrame(similar_movies,columns=['correlation'])
     
-    corr_df.dropna(inplace=True)
-    recommendatoions = corr_df.join(
+    corr_df = pd.DataFrame(
+        similar_movies,
+        columns=['correlation']
+    )
+    
+    corr_df.dropna()
+    recommendations = corr_df.join(
         movie_stats['count']
     )
     
-    recommendatoions = recommendatoions[recommendatoions['count'] > 100]
-    recommendatoions = recommendatoions.sort_values(
+    recommendations = recommendations[
+        recommendations['count'] > 100
+    ]
+    
+    recommendations = recommendations.sort_values(
         'correlation',
         ascending=False
     )
     
-    return recommendatoions.head(10)
+    recommendations = recommendations[
+        recommendations.index != movie_name
+    ]
+    
+    return recommendations.head(10)
 
 movie = input('movie name : ')
 recommendations = recommend(movie_name=movie)
