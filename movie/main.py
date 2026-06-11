@@ -30,14 +30,31 @@ movie_stats = df.groupby('title')['rating'].agg(
     ['mean', 'count']
 )
 
-def recommend(movie_name,top_n=10):
-    similar = similarity_df[movie_name]
-    similar = similar.sort_values(
+def recommend(movie_name, top_n=10, min_votes=100):
+    # 1. get similarity series
+    similar = similarity_df.loc[movie_name]
+
+    # 2. convert correctly
+    recommendations = similar.to_frame(name='similarity')
+
+    # 3. join stats
+    recommendations = recommendations.join(movie_stats)
+
+    # 4. remove self BEFORE anything else
+    recommendations = recommendations.drop(movie_name, errors='ignore')
+
+    # 5. filter valid movies
+    recommendations = recommendations[
+        recommendations['count'] >= min_votes
+    ]
+
+    # 6. sort
+    recommendations = recommendations.sort_values(
+        'similarity',
         ascending=False
     )
-    
-    similar = similar.drop(movie_name)
-    return similar.head(top_n)
+
+    return recommendations.head(top_n)
 
 def search_movie(query,limit=10):    
     query = query.lower()
