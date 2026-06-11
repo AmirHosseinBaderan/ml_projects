@@ -30,6 +30,12 @@ movie_stats = df.groupby('title')['rating'].agg(
     ['mean', 'count']
 )
 
+movie_stats['norm_count'] = (
+    movie_stats['count'] - movie_stats['count'].min()
+) / (
+    movie_stats['count'].max() - movie_stats['count'].min()
+)
+
 def recommend(movie_name, top_n=10, min_votes=100):
     # 1. get similarity series
     similar = similarity_df.loc[movie_name]
