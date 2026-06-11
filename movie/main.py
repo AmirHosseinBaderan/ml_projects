@@ -37,29 +37,35 @@ movie_stats['norm_count'] = (
 )
 
 def recommend(movie_name, top_n=10, min_votes=100):
-    # 1. get similarity series
+    # get similarity series
     similar = similarity_df.loc[movie_name]
 
-    # 2. convert correctly
+    # convert correctly
     recommendations = similar.to_frame(name='similarity')
 
-    # 3. join stats
+    # join stats
     recommendations = recommendations.join(movie_stats)
 
-    # 4. remove self BEFORE anything else
+    # remove self BEFORE anything else
     recommendations = recommendations.drop(movie_name, errors='ignore')
 
-    # 5. filter valid movies
+    # filter valid movies
     recommendations = recommendations[
         recommendations['count'] >= min_votes
     ]
 
-    # 6. sort
+    # hybrid score 
+    recommendations['score'] = (
+        recommendations['similarity'] * 0.7 +
+        recommendations['norm_count'] * 0.2 + 
+        recommendations['mean'] * 0.1
+    )
+    
     recommendations = recommendations.sort_values(
-        'similarity',
+        'score',
         ascending=False
     )
-
+    
     return recommendations.head(top_n)
 
 def search_movie(query,limit=10):    
