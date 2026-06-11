@@ -24,3 +24,11 @@ def get_users():
         header=None,
         names=['user_id','age','gender','occupation','zip_code']
     )
+    
+def load_data():
+    ratings = get_ratings()
+    movies = get_movies()
+    users = get_users()
+
+    df = pd.merge(ratings, movies, on="movie_id")
+    return df
