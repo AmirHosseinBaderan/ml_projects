@@ -1,6 +1,6 @@
 import pandas as pd
 from sklearn.metrics.pairwise import cosine_similarity
-from recommender import MovieRecommnder
+from recommender import MovieRecommender
 
 def build_engine(df):
     movie_matrix = build_movie_matrix(df)
@@ -21,7 +21,7 @@ def build_engine(df):
         movie_stats['count'].max() - movie_stats['count'].min()
     )
     
-    recomender = MovieRecommnder(similarity_df,movie_stats)
+    recomender = MovieRecommender(similarity_df,movie_stats)
     
     return recomender,movie_stats
     

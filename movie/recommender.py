@@ -1,5 +1,5 @@
 
-class MovieRecommnder:
+class MovieRecommender:
     def __init__(self,similarity_df,movie_stats):
         self.similarity_df = similarity_df
         self.movie_stats = movie_stats
