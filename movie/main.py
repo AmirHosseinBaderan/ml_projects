@@ -39,17 +39,18 @@ def recommend(movie_name,top_n=10):
     similar = similar.drop(movie_name)
     return similar.head(top_n)
 
-def search_movie(query,limit=10):
-    movie_titles = movies['title'].unique()
-    
+def search_movie(query,limit=10):    
     query = query.lower()
-    results = [
-        title
-        for title in movie_titles
-        if query in title.lower()
+    matches = movie_stats.loc[
+        movie_stats.index.str.lower().str.contains(query)
     ]
     
-    return results[:limit]
+    matches = matches.sort_values(
+        'count',
+        ascending=False
+    )
+    
+    return matches.head(limit)
 
 cmd = input('command : 1-Search , 2-Recommendation : ')
 if cmd == '1':
