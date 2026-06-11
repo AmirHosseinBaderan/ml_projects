@@ -1,5 +1,6 @@
 import pandas as pd
 from data import get_movies,get_ratings,get_users
+from sklearn.metrics.pairwise import cosine_similarity
 
 ratings = get_ratings()
 movies = get_movies()
@@ -16,41 +17,47 @@ movie_matrix = df.pivot_table(
     values='rating'
 )
 
+movie_features = movie_matrix.fillna(0).T
+
+cosine_sim = cosine_similarity(movie_features)
+similarity_df = pd.DataFrame(
+    cosine_sim,
+    index=movie_features.index,
+    columns=movie_features.index
+)
+
 movie_stats = df.groupby('title')['rating'].agg(
     ['mean', 'count']
 )
 
-
-def recommend(movie_name):
-    movie_ratings = movie_matrix[movie_name]
-    
-    similar_movies = movie_matrix.corrwith(movie_ratings)
-    
-    corr_df = pd.DataFrame(
-        similar_movies,
-        columns=['correlation']
-    )
-    
-    corr_df.dropna()
-    recommendations = corr_df.join(
-        movie_stats['count']
-    )
-    
-    recommendations = recommendations[
-        recommendations['count'] > 100
-    ]
-    
-    recommendations = recommendations.sort_values(
-        'correlation',
+def recommend(movie_name,top_n=10):
+    similar = similarity_df[movie_name]
+    similar = similar.sort_values(
         ascending=False
     )
     
-    recommendations = recommendations[
-        recommendations.index != movie_name
+    similar = similar.drop(movie_name)
+    return similar.head(top_n)
+
+def search_movie(query,limit=10):
+    movie_titles = movies['title'].unique()
+    
+    query = query.lower()
+    results = [
+        title
+        for title in movie_titles
+        if query in title.lower()
     ]
     
-    return recommendations.head(10)
+    return results[:limit]
 
-movie = input('movie name : ')
-recommendations = recommend(movie_name=movie)
-print(recommendations)
+cmd = input('command : 1-Search , 2-Recommendation : ')
+if cmd == '1':
+    query = input('Input search : ')
+    search_res = search_movie(query)
+    print(search_res)
+elif cmd == '2':
+    movie = input('movie name : ')
+    recommendations = recommend(movie_name=movie)
+    print(recommendations)    
+
