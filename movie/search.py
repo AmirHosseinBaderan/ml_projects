@@ -1,13 +1,19 @@
+class MovieSearchEngine:
 
+    def __init__(self, movie_stats):
+        self.movie_stats = movie_stats
 
-def search(movie_stats,query,limit=10):
-    q = query.lower()
-    
-    results = movie_stats.loc[
-        movie_stats.index.str.lower().str.contains(q)
-    ]
-    
-    return results.sort_values(
-        'count',
-        ascending=False
-    )
+    def search(self, query, limit=10):
+
+        q = query.lower()
+
+        results = self.movie_stats.loc[
+            self.movie_stats.index.str.lower().str.contains(q)
+        ]
+
+        results = results.sort_values(
+            'count',
+            ascending=False
+        )
+
+        return results.head(limit)
