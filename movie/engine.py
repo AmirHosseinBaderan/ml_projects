@@ -1,29 +1,34 @@
 import pandas as pd
-from sklearn.metrics.pairwise import cosine_similarity
 from recommender import MovieRecommender
+from sklearn.neighbors import NearestNeighbors
+from search import MovieSearchEngine
 
 def build_engine(df):
     movie_matrix = build_movie_matrix(df)
     movie_features = movie_matrix.fillna(0).T
     
-    similarity = cosine_similarity(movie_features)
-    
-    similarity_df = pd.DataFrame(
-        similarity,
-        index=movie_features.index,
-        columns=movie_features.index
+    model = NearestNeighbors(
+        metric='cosine',
+        algorithm='brute'
     )
     
-    movie_stats = df.groupby('title')['rating'].agg(['mean','count'])
+    model.fit(movie_features)
+    movie_stats = df.groupby('title')['rating'].agg({'mean','count'})
     movie_stats['norm_count'] = (
         movie_stats['count'] - movie_stats['count'].min()
     ) / (
-        movie_stats['count'].max() - movie_stats['count'].min()
+        movie_stats['count'].max()- movie_stats['count'].min()
     )
     
-    recomender = MovieRecommender(similarity_df,movie_stats)
+    recommender = MovieRecommender(
+        model,
+        movie_features,
+        movie_stats,
+    )
     
-    return recomender,movie_stats
+    search_engine = MovieSearchEngine(movie_stats)
+    
+    return recommender,search_engine
     
     
 def build_movie_matrix(df):
