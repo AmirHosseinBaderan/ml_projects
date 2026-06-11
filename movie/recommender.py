@@ -1,15 +1,27 @@
+import pandas as pd
 
 class MovieRecommender:
-    def __init__(self,similarity_df,movie_stats):
-        self.similarity_df = similarity_df
+    def __init__(self,model,movie_features,movie_stats):
+        self.model = model
+        self.movie_features = movie_features
         self.movie_stats = movie_stats
         
     def recommend(self,movie_name,top_n=10,min_votes=100):
-        similar = self.similarity_df.loc[movie_name]
+        vector = self.movie_features.loc[movie_name].values.reshape(1,-1)
+        distance ,indicaes = self.model.kleighbors(
+            vector,
+            n_neighbors=top_n+1
+        )
         
-        recs = similar.to_frame('similarity')
+        movies = self.movie_features.index[indicaes[0]]
+        
+        recs = pd.DataFrame({
+            'title':movies,
+            'similarity':1 - distance[0]
+        }).set_index('title')
+        
         recs = recs.join(self.movie_stats)
-        
+        recs = recs.drop(movie_name,errors='ignore')
         recs = recs[
             recs['count'] >= min_votes
         ]
