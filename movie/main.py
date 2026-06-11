@@ -52,13 +52,42 @@ def search_movie(query,limit=10):
     
     return matches.head(limit)
 
-cmd = input('command : 1-Search , 2-Recommendation : ')
-if cmd == '1':
-    query = input('Input search : ')
-    search_res = search_movie(query)
-    print(search_res)
-elif cmd == '2':
-    movie = input('movie name : ')
-    recommendations = recommend(movie_name=movie)
-    print(recommendations)    
 
+while True:
+    cmd = input("\n 1-Search \n 2-Recommendation \n 0-Exit \n\n Select : ")
+    
+    if cmd == "0":
+        break
+    elif cmd == "1":
+        query = input("Search : ")
+        results = search_movie(query)
+        
+        if len(results) == 0:
+            print("No movies found")
+            continue
+        
+        for i,movie in enumerate(results.index,start=1):
+            row = results.loc[movie]
+            
+            print(
+                f"{i}. {movie}"
+                f"(rating={row['mean']:.2f}, votes={row['count']})"
+            )
+            
+        choice = input(
+            "\n Select movie number for recommdations (Enter to skip): "
+        )
+        if choice:
+            selected_movie = results.index[int(choice) -1]
+            print(f"\n Recommendations for : {selected_movie}\n")
+            
+            print(recommend(selected_movie))
+            
+    elif cmd == '2':
+        movie = input("Movie name : ")
+        print(
+            recommend(movie)
+        )
+        
+    else:
+        print("Invalid command")
