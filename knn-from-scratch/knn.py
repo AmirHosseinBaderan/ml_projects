@@ -11,7 +11,7 @@ def euclidean_distance(a,b):
 
 def get_neighbors(X,y,sample,k):
     distances = []
-    for i in range(k):
+    for i in range(len(X)):
         dist = euclidean_distance(sample,X.iloc[i].values)
         label = y.iloc[i]
         distances.append((X.iloc[i].values,label,dist))
