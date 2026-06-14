@@ -1,56 +1,27 @@
-# Movie Recommendation System
+# Movie Recommender
 
-A movie search and recommendation engine built using collaborative filtering with k-nearest neighbors (KNN).
+## What it does
+An interactive movie recommendation and search system. Uses collaborative filtering (item-based KNN) to recommend movies similar to a given title, and provides fuzzy title search over the MovieLens dataset.
 
-## Project Overview
+## How it works
+1. Loads MovieLens data (`u.data` ratings, `u.item` movies, `u.user` users) via `data.py`
+2. Builds a user-by-movie rating matrix (`engine.py` / `feature_builder.py`)
+3. Trains a `NearestNeighbors` model with cosine similarity on the movie-feature vectors
+4. When recommending, finds nearest movie vectors, filters by minimum votes, and ranks by a weighted score combining similarity, popularity, and average rating
+5. Search performs case-insensitive substring matching on movie titles sorted by popularity
 
-This system provides two main functionalities:
-1. **Movie Search** - Find movies by title keyword
-2. **Movie Recommendations** - Get similar movie suggestions based on user rating patterns
+## Implementation
+- `data.py` — loads and merges MovieLens dataset files into a single DataFrame
+- `feature_builder.py` — pivots ratings into a user × movie matrix (duplicate of `engine.build_movie_matrix`, not used directly)
+- `engine.py` — orchestrates model training, movie statistics (mean rating, count, normalized count), and builds both the recommender and search engine
+- `recommender.py:9` — `MovieRecommender.recommend()` queries the KNN model, joins with stats, applies a scoring formula:
+  - `score = 0.7 * similarity + 0.2 * norm_count + 0.1 * mean`
+  - Filters out the input movie and titles with fewer than `min_votes` ratings
+- `search.py` — case-insensitive `str.contains` search over title index, sorted by rating count
 
-## How It Works
+> Note: `recommender.py` contains a bug on line 11 — `self.model.kleighbors` should be `self.model.kneighbors`.
 
-The system uses collaborative filtering to recommend movies:
-
-1. **Data Processing**: Loads movie ratings data and transforms it into a user-movie rating matrix
-2. **Feature Building**: Each movie becomes a feature vector based on ratings from all users
-3. **Similarity Search**: Uses scikit-learn's `NearestNeighbors` with cosine distance to find similar movies
-4. **Recommendation Scoring**: Combines similarity scores with popularity metrics to rank recommendations
-
-## File Structure
-
-| File | Description |
-|------|-------------|
-| `main.py` | CLI entry point - provides interactive menu for search and recommendations |
-| `data.py` | Data loading utilities for MovieLens dataset files (u.data, u.item, u.user) |
-| `feature_builder.py` | Builds the user-movie rating matrix (also duplicated in engine.py) |
-| `engine.py` | Core engine that initializes the KNN model and creates recommender/search engine instances |
-| `recommender.py` | `MovieRecommender` class - finds similar movies using KNN and ranks by composite score |
-| `search.py` | `MovieSearchEngine` class - searches movies by title substring |
-
-## Recommendation Algorithm
-
-The recommendation score combines three factors:
-- **Similarity (70%)** - 1 minus cosine distance to the target movie
-- **Popularity (20%)** - Normalized vote count
-- **Average Rating (10%)** - Mean rating of the movie
-
-Movies must have at least 100 votes to be included in recommendations.
-
-## Data Files
-
-Located in `data/` directory:
-- `u.data` - User ratings (100,000 records): user_id, movie_id, rating, timestamp
-- `u.item` - Movie metadata (1,682 movies): movie_id, title, release_date, IMDb URL, genres
-- `u.user` - User demographics (943 users): user_id, age, gender, occupation, zip_code
-
-## Usage
-
+## Run
 ```bash
 python main.py
 ```
-
-Options:
-1. Search - Enter a movie title keyword to find movies
-2. Recommend - Enter a movie name to get similar recommendations
-0. Exit - Quit the program
