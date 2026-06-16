@@ -1,14 +1,14 @@
 import random
 from graph_utils import get_neighbors,build_graph
+from state_space import build_state_space,build_state_mappings
 from metro_env import TehranMetroEnv
 import numpy as np
+from q_table import create_q_table
+from policy import choose_action
 
 graph = build_graph()
 env = TehranMetroEnv(graph)
 stations = list(graph.keys())
-station_to_id = {s:i for i, s in enumerate(stations)}
-id_to_station = {i:s for s,i in station_to_id.items()}
-Q = np.zeros((len(stations),len(stations)))
 
 #Hyperparameters
 alpha = 0.1 # learning rate
@@ -17,62 +17,59 @@ epsilon = 1.0 # exploration
 epsilon_decay = 0.995
 epsilon_min = 0.05
 
-def choise_action(state_id):
-    if random.random() < epsilon:
-        return random.choice(range(len(stations)))
-    else:
-        return np.argmax(Q[state_id])
+# states
+states = build_state_space(stations)
+state_to_id, id_to_state = build_state_mappings(states)
+q_table = create_q_table(states,graph)
 
-
-def get_random_action(graph,current_station):
-    neighbors = graph[current_station]
-    return random.choice(neighbors)   
-    
-def run_episode(
-    graph,
-    start_station,
-    goal_station,
-    max_steps=100
-):
-    current_station = start_station
-    path = [current_station]
-    for step in range(max_steps):
-        if current_station == goal_station:
-            return True,path
-        
-        current_station = get_random_action(
-            graph,
-            current_station
-        )
-        
-        path.append(current_station)
-    return False,path
-
-# Training loop
-for episode in range(1000):
+# Training 
+for episode in range(20000):
     start = random.choice(stations)
     goal = random.choice(stations)
     
     state = env.reset(start,goal)
-    state_id = station_to_id[state]
     
     done = False
-    step = 0
+    step =0
     
     while not done and step < 100:
-        action_id = choise_action(state_id)
-        action = id_to_station[action_id]
+        # choose action 
+        action = choose_action(state,q_table,epsilon)
         
+        # step in env 
         next_state,reward,done = env.step(action)
-        next_state_id = station_to_id[next_state]
         
-        # Q-Learning update
-        Q[state_id][action_id] = Q[state_id][action_id] + alpha * (
-            reward + gamma * np.max(Q[next_state_id]) - Q[state_id][action_id]
+        # safety check 
+        if next_state not in q_table:
+            break
+        
+        # Q- values
+        old_value = q_table[state][action]
+        next_max = max(q_table[next_state].values())
+
+        # Q update
+        q_table[state][action] = old_value + alpha *(
+            reward + gamma * next_max - old_value
         )
         
-        state_id = next_state_id
+        # move forward
+        state = next_state
         step += 1
         
-    # decay epsilon
+    # exploration decay
     epsilon = max(epsilon_min,epsilon * epsilon_decay)
+    
+    if epsilon % 100 == 0:
+        print(f"Episode {episode} done, Epsilon={epsilon}")
+        
+state = env.reset("Tajrish", "Meydan-e Azadi")
+for i in range(30):
+    action = choose_action(state,q_table,0.0) 
+    next_state,reward,done = env.step(action)
+    
+    print(state, "->", action, "->", next_state)
+    
+    state = next_state
+    if done:
+        print("GOAL FOUND :)")
+        break
