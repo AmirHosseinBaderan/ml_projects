@@ -3,6 +3,7 @@ from rl.train import train
 from rl.agent import QLearningAgent
 from metro_env.metro_env import MetroEnv
 from utils.graph_viz import draw_graph
+from utils.learning_plot import plot_learning_curve
 
 def get_best_path(env:MetroEnv,agent:QLearningAgent,start,goal):
     state = start
@@ -43,11 +44,13 @@ if __name__ == "__main__":
         exit()
 
     print("\n Training agent...")
-    train(env, agent, start, goal, 1000)
+    rewards = train(env, agent, start, goal, 1000)
     
     path = get_best_path(env, agent, start, goal)
+    plot_learning_curve(rewards)
 
     print("\n Best path:")
     print(" -> ".join(path))
+
 
     draw_graph(graph, path)
