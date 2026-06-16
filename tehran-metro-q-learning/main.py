@@ -19,3 +19,15 @@ for station_name,neighbors in graph.items():
 print(f"invalid relations : {len(invalid_relations)}")
 for item in invalid_relations[:10]:
     print(item)
+    
+# check direct edges
+directed_edges = []
+for station_name,neighbors in graph.items():
+    for neighbor in neighbors:
+        if station_name not in graph[neighbor]:
+            directed_edges.append(
+                (station_name,neighbor)
+            )
+            
+print(f'direct edges count : {len(directed_edges)}')
+print(directed_edges[:20])
