@@ -22,3 +22,6 @@ class TehranMetroEnv:
             return (self.current,self.goal),100,True
         
         return (self.current,self.goal),-1,False
+    
+    def get_available_actions(self):
+        return self.graph[self.current]
