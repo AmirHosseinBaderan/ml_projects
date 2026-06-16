@@ -2,7 +2,6 @@ from utils.graph import build_graph,load_stations
 from rl.train import train
 from rl.agent import QLearningAgent
 from metro_env.metro_env import MetroEnv
-from utils.visualize import print_policy
 
 def get_best_path(env:MetroEnv,agent:QLearningAgent,start,goal):
     state = start
