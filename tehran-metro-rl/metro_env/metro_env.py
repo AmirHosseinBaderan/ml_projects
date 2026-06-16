@@ -35,6 +35,13 @@ class MetroEnv:
         if self.state == self.goal:
             return self.state,100,True
         
+        prev_line = self.stations[prev].get("line",[])
+        next_line = self.stations[self.state].get("line",[])
+        
+        line_switch_penalty = 0
+        if not set(prev_line).intersection(set(next_line)):
+            line_switch_penalty = -5
+        
         reward = -1
         try:
             s1 = self.stations[prev]
@@ -49,5 +56,8 @@ class MetroEnv:
         except:
             pass
         
+        reward += line_switch_penalty
         return self.state,reward,False
                   
+    def get_line(self,station):
+        return self.stations[station].get("line",[])
