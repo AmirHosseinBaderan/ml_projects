@@ -1,33 +1,33 @@
 import json
+import random
+from graph_utils import get_neighbors,build_graph
 
-with open('./data/stations.json') as f:
-    stations = json.load(f)
+graph = build_graph()
 
-graph = {}
-for station_name,station_data in stations.items():
-    graph[station_name] = station_data["relations"]
-
-# graph validation
-invalid_relations = []
-for station_name,neighbors in graph.items():
-    for neighbor in neighbors:
-        if neighbor not in graph:
-            invalid_relations.append(
-                (station_name,neighbor)
-            )
-            
-print(f"invalid relations : {len(invalid_relations)}")
-for item in invalid_relations[:10]:
-    print(item)
+def get_random_action(graph,current_station):
+    neighbors = graph[current_station]
+    return random.choice(neighbors)   
     
-# check direct edges
-directed_edges = []
-for station_name,neighbors in graph.items():
-    for neighbor in neighbors:
-        if station_name not in graph[neighbor]:
-            directed_edges.append(
-                (station_name,neighbor)
-            )
-            
-print(f'direct edges count : {len(directed_edges)}')
-print(directed_edges[:20])
+def run_episode(
+    graph,
+    start_station,
+    goal_station,
+    max_steps=100
+):
+    current_station = start_station
+    path = [current_station]
+    for step in range(max_steps):
+        if current_station == goal_station:
+            return True,path
+        
+        current_station = get_random_action(
+            graph,
+            current_station
+        )
+        
+        path.append(current_station)
+    return False,path
+
+success,path = run_episode(graph,"Tajrish","Teatr-e Shahr")
+print(success)
+print(path)
