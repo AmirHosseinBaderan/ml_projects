@@ -25,7 +25,7 @@ class MetroEnv:
     def actions(self,state):
         return self.graph[state]
     
-    def ste(self,action):
+    def step(self,action):
         if action not in self.graph[self.state]:
             return self.state, -10, False
         
