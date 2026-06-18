@@ -1,142 +1,63 @@
-from pathlib import Path
-import matplotlib.pyplot as plt
+import numpy as np
 import tensorflow as tf
-from model_plt import show_model_plot
-import os
-from predictor import predict_image
+from tensorflow import keras
+from tensorflow.keras.preprocessing.image import ImageDataGenerator
+import cv2
 
-MODEL_PATH = "cats_vs_dogs.keras"
+img_size = (150,150)
+batch_size = 32
 
-base_dir = Path('./data')
-cat_dir = base_dir / 'train/cats/'
-dog_dir = base_dir / 'train/dogs/'
-cat_test_dir = base_dir / 'validation/cats/'
-dog_test_dir = base_dir / 'validation/dogs/'
+# Createing ImageDataGenerator
+train_datagen = ImageDataGenerator(rescale = 1./255,
+                                   shear_range=0.2,
+                                   zoom_range=0.2,
+                                   horizontal_flip=True)
 
-train_cats = len(list(cat_dir.glob('*')))
-train_dogs = len(list(dog_dir.glob('*')))
+test_dategen = ImageDataGenerator(rescale=1./255)
 
-print(f"Cats : {train_cats}")
-print(f"Dogs : {train_dogs}")
+# Createing training and testing sets 
+training_set = train_datagen.flow_from_directory('./data/training_set',
+                                                target_size=img_size,
+                                                batch_size=batch_size,
+                                                class_mode='binary')
 
-# Create dataset
-IMG_HEIGHT = 150
-IMG_WIDTH = 150
-BATCH_SIZE = 32
+test_set = test_dategen.flow_from_directory('./data/test_set',
+                                            target_size=img_size,
+                                            batch_size=batch_size,
+                                            class_mode='binary')
 
-train_ds = tf.keras.utils.image_dataset_from_directory(
-    base_dir / 'train',
-    image_size=(IMG_HEIGHT, IMG_WIDTH),
-    batch_size=BATCH_SIZE
-)
+# define model architecture 
+model = keras.Sequential([
+    keras.layers.Conv2D(32, (3, 3), activation='relu', input_shape=(150, 150, 3)),
+    keras.layers.MaxPooling2D((2, 2)),
+    keras.layers.Conv2D(64, (3, 3), activation='relu'),
+    keras.layers.MaxPooling2D((2, 2)),
+    keras.layers.Conv2D(128, (3, 3), activation='relu'),
+    keras.layers.MaxPooling2D((2, 2)),
+    keras.layers.Flatten(),
+    keras.layers.Dense(512, activation='relu'),
+    keras.layers.Dense(1, activation='sigmoid')
+])
 
-val_ds = tf.keras.utils.image_dataset_from_directory(
-    base_dir / 'validation',
-    image_size=(IMG_HEIGHT, IMG_WIDTH),
-    batch_size=BATCH_SIZE
-)
+# Compile model 
+model.compile(loss='binary_crossentropy',optimizer='adam',metrics=['accuracy'])
+model.fit(training_set,epochs=50,validation_data=0.1)
 
-AUTOTUNE = tf.data.AUTOTUNE
+# read image to be tested 
+image = cv2.imread("test_image.jpg")
+# Resize the image to the input shape of the model
+image = cv2.resize(image, (150, 150))
+# convert image to numpy array and add an additional dimension
+image = np.expand_dims(image,axis=0)
 
-train_ds = train_ds.cache().shuffle(1000).prefetch(buffer_size=AUTOTUNE)
-val_ds = val_ds.cache().prefetch(buffer_size=AUTOTUNE)
+# Normalize image 
+image = image / 255.0
 
-# normalize
-normalization_layer = tf.keras.layers.Rescaling(1.0 / 255)
+# make prediction 
+predictions = model.predict(image)
 
-# model builder function (important for reuse)
-def build_model():
-    return tf.keras.Sequential([
-        normalization_layer,
+class_index = np.argmax(predictions[0])
+# define classes 
+classes = ['cat','dog']
 
-        tf.keras.layers.Conv2D(32,3,activation='relu'),
-        tf.keras.layers.MaxPooling2D(),
-
-        tf.keras.layers.Conv2D(64,3,activation='relu'),
-        tf.keras.layers.MaxPooling2D(),
-
-        tf.keras.layers.Conv2D(128,3,activation='relu'),
-        tf.keras.layers.MaxPooling2D(),
-
-        tf.keras.layers.Flatten(),
-
-        tf.keras.layers.Dense(512, activation='relu'),
-
-        tf.keras.layers.Dense(1, activation='sigmoid')
-    ])
-
-# LOAD OR TRAIN
-if os.path.exists(MODEL_PATH):
-    print("Loading saved model...")
-    model = tf.keras.models.load_model(MODEL_PATH)
-    history = None
-
-else:
-    print("Training new model...")
-
-    model = build_model()
-
-    model.compile(
-        optimizer='adam',
-        loss='binary_crossentropy',
-        metrics=['accuracy']
-    )
-
-    early_stop = tf.keras.callbacks.EarlyStopping(
-        monitor='val_loss',
-        patience=3,
-        restore_best_weights=True
-    )
-
-    history = model.fit(
-        train_ds,
-        validation_data=val_ds,
-        epochs=20,
-        callbacks=[early_stop]
-    )
-
-    model.save(MODEL_PATH)
-    print("Model saved!")
-
-# EVALUATION
-loss, acc = model.evaluate(val_ds)
-print(f'loss : {loss} , acc : {acc}')
-
-print("model summary:")
-model.summary()
-
-# PLOTS (only if trained)
-if history is not None:
-    print(history.history.keys())
-    print(max(history.history['accuracy']))
-    print(max(history.history['val_accuracy']))
-
-    show_model_plot(history)
-    
-for images, labels in val_ds.take(1):
-    preds = model.predict(images)
-
-    print("raw predictions:")
-    print(preds[:10])
-
-    print("labels:")
-    print(labels.numpy()[:10])
-
-    
-print("Check dogs image")
-wrong_dogs = 0
-for d in range(len(list(dog_test_dir.glob('*')))):
-    predict,lable = predict_image(list(dog_test_dir.glob('*'))[d],model,['cats','dogs'])
-    if lable != 'dogs':
-        wrong_dogs +=1 
-
-print(f"Wrong dogs detection : {wrong_dogs}")
-
-print("Check cats image")
-wrong_cats = 0
-for d in range(len(list(cat_test_dir.glob('*')))):
-    predict,lable = predict_image(list(cat_test_dir.glob('*'))[d],model,['cats','dogs'])
-    if lable != 'cats':
-        wrong_cats +=1 
-
-print(f"Wrong cats detection : {wrong_cats}")
+print(f"Model predicts that image is a : {classes[class_index]}")
