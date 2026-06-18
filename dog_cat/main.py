@@ -4,6 +4,7 @@ from tensorflow import keras
 from tensorflow.keras.preprocessing.image import ImageDataGenerator
 import cv2
 import os
+from predictor import predict_image
 
 img_size = (150, 150)
 batch_size = 32
@@ -78,17 +79,14 @@ else:
 # Prediction
 print(training_set.class_indices)
 
-classes = {v: k for k, v in training_set.class_indices.items()}
 
-image = cv2.imread("./data/test_set/dogs/dog.4004.jpg")
-image = cv2.resize(image, img_size)
-image = np.expand_dims(image, axis=0)
-image = image / 255.0
 
-prediction = model.predict(image)[0][0]
-print("raw:", prediction)
 
-class_index = int(prediction > 0.5)
-result = classes[class_index]
+result, score = predict_image(
+    model=model,
+    image_path="./data/test_set/cats/cat.4004.jpg",
+    img_size=img_size,
+    class_indices=training_set.class_indices
+)
 
-print(f"Model predicts: {result}")
+print(f"Prediction: {result} ({score})")
