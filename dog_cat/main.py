@@ -29,3 +29,22 @@ val_ds = tf.keras.utils.image_dataset_from_directory(
     image_size=(IMG_HEIGHT,IMG_WIDTH),
     batch_size=BATCH_SIZE
 )
+
+# check class 
+print(train_ds.class_names)
+for images,labels in train_ds.take(1):
+    print(images.shape)
+    print(labels.shape)
+    
+    # show one batch  
+    for i in range(9):
+        ax = plt.subplot(3,3,i + 1)
+        plt.imshow(images[i].numpy().astype('uint8'))
+        
+        plt.title(
+            train_ds.class_names[labels[i]]
+        )
+        
+        plt.axis("off")
+        
+plt.show()
