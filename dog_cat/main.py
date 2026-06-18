@@ -42,8 +42,76 @@ val_ds = val_ds.cache().prefetch(
 # normalize ds
 normalization_layer = tf.keras.layers.Rescaling(1.0/ 255)
 
-for images, labels in train_ds.take(1):
-    normalized = normalization_layer(images)
+# Create model 
+model = tf.keras.Sequential([
+    normalization_layer,
+    tf.keras.layers.Conv2D(
+        32,
+        (3,3),
+        activation='relu',
+        input_shape=(150,150,3)
+    ),
+    
+    tf.keras.layers.MaxPooling2D(),
+    tf.keras.layers.Conv2D(
+        64,
+        (3,3),
+        activation='relu'
+    ),
+    
+    tf.keras.layers.MaxPooling2D(),
+    tf.keras.layers.Conv2D(
+        128,
+        (3,3),
+        activation='relu'
+    ),
+    
+    tf.keras.layers.MaxPooling2D(),
+    tf.keras.layers.Flatten(),
+    
+    tf.keras.layers.Dense(
+        512,
+        activation='relu'
+    ),
+    
+    tf.keras.layers.Dense(
+        1,
+        activation='sigmoid'
+    )
+])
 
-    print(tf.reduce_min(normalized))
-    print(tf.reduce_max(normalized))
+model.compile(
+    optimizer='adam',
+    loss='binary_crossentropy',
+    metrics=['accuracy']
+)
+
+history = model.fit(
+    train_ds,
+    validation_data=val_ds,
+    epochs=5
+)
+
+print(history.history.keys())
+
+# show accuracy 
+plt.plot(history.history['accuracy'])
+plt.plot(history.history['val_accuracy'])
+
+plt.title('Model Accuracy')
+plt.ylabel("Accuracy")
+plt.xlabel('Epoch')
+plt.legend(['Train','Validation'])
+
+plt.show()
+
+# show loss
+plt.plot(history.history['loss'])
+plt.plot(history.history['val_loss'])
+
+plt.title('Model Loss')
+plt.ylabel('Loss')
+plt.xlabel('Epoch')
+plt.legend(['Train', 'Validation'])
+
+plt.show()
