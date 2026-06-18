@@ -1,5 +1,6 @@
 from pathlib import Path
 import matplotlib.pyplot as plt
+import tensorflow as tf
 
 base_dir = Path('./data')
 cat_dir = base_dir / 'train/cats/'
@@ -11,16 +12,20 @@ train_dogs = len(list(dog_dir.glob('*')))
 print(f"Cats : {train_cats}")
 print(f"Dogs : {train_dogs}")
 
+# Create dataset
+IMG_HEIGHT = 150
+IMG_WIDTH = 150
+BATCH_SIZE = 32
 
-images = list(cat_dir.glob("*.jpg"))
-plt.figure(figsize=(10,0))
+train_ds = tf.keras.utils.image_dataset_from_directory(
+    base_dir / 'train',
+    image_size=(IMG_HEIGHT,IMG_WIDTH),
+    batch_size=BATCH_SIZE
+)
 
-for i in range(9):
-    plt.subplot(3,3,i+1)
-    
-    img = plt.imread(images[i])
-    plt.imshow(img)
-    plt.axis("off")
-    
-plt.show()
-    
+# validation data
+val_ds = tf.keras.utils.image_dataset_from_directory(
+    base_dir / 'validation',
+    image_size=(IMG_HEIGHT,IMG_WIDTH),
+    batch_size=BATCH_SIZE
+)
