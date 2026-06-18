@@ -85,11 +85,10 @@ image = cv2.resize(image, img_size)
 image = np.expand_dims(image, axis=0)
 image = image / 255.0
 
-# make prediction 
-predictions = model.predict(image)
+prediction = model.predict(image)[0][0]
+print("raw:", prediction)
 
-class_index = np.argmax(predictions[0])
-# define classes 
-classes = ['cat','dog']
+class_index = int(prediction > 0.5)
+result = classes[class_index]
 
-print(f"Model predicts that image is a : {classes[class_index]}")
+print(f"Model predicts: {result}")
