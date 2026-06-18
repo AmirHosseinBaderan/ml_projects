@@ -34,7 +34,7 @@ model.compile(
 model.fit(
     x_train,
     y_train,
-    epochs=5,
+    epochs=10,
     batch_size=100,
     validation_split=0.1
 )
@@ -46,13 +46,43 @@ print(f"Accuracy : {accuracy}")
 # predict 
 predictions = model.predict(x_test,verbose=0)
 
-for i in range(200):
-    pred_label = np.argmax(predictions[i])
-    true_label = np.argmax(y_test[i])
+wrong_images = []
+
+print(f"total test data count : {len(y_test)}")
+for i in range(len(y_test)):
+    pred = np.argmax(predictions[i])
+    true = np.argmax(y_test[i])
     
-    if pred_label != true_label:
-        plt.title(
-            f'False - Prediction : {pred_label} Label : {true_label}'
-        )
-        plt.imshow(x_test[i],cmap='gray_r')
-        plt.show()
+    if pred != true:
+        wrong_images.append((i,pred,true))
+        
+current = 0
+fig,ax = plt.subplots()
+
+def show_image():
+    ax.clear()
+    
+    idx,pred,true = wrong_images[current]
+    ax.imshow(x_test[idx],cmap='gray_r')
+    
+    ax.set_title(
+        f"{current + 1}/{len(wrong_images)} | Prediction : {pred} Label : {true}"
+    )
+    ax.axis('off')
+    
+    fig.canvas.draw()
+    
+def on_key(event):
+    global current
+    
+    if event.key == 'right':
+        current = min(current + 1,len(wrong_images) - 1)
+    elif event.key == "left":
+        current = max(current -1 ,0)
+    
+    show_image()
+    
+fig.canvas.mpl_connect("key_press_event",on_key)
+
+show_image()
+plt.show()
