@@ -15,7 +15,7 @@ y_train = to_categorical(y_train,10)
 y_test = to_categorical(y_test,10)
 
 # make model 
-model = tf.keras.Sequantial([
+model = tf.keras.Sequential([
     tf.keras.layers.Flatten(input_shape=(28,28)),
     tf.keras.layers.Dense(128,activation='relu'),
     tf.keras.layers.Dense(64,activation='relu'),
