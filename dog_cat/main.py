@@ -43,14 +43,7 @@ val_ds = val_ds.cache().prefetch(
 normalization_layer = tf.keras.layers.Rescaling(1.0/ 255)
 
 # Create model 
-data_augmentation = tf.keras.Sequential([
-    tf.keras.layers.RandomFlip('horizontal'),
-    tf.keras.layers.RandomRotation(0.1),
-    tf.keras.layers.RandomZoom(0.1)
-])
-
 model = tf.keras.Sequential([
-    data_augmentation,
     normalization_layer,
 
     tf.keras.layers.Conv2D(
@@ -58,7 +51,6 @@ model = tf.keras.Sequential([
         3,
         activation='relu'
     ),
-
     tf.keras.layers.MaxPooling2D(),
 
     tf.keras.layers.Conv2D(
@@ -66,7 +58,6 @@ model = tf.keras.Sequential([
         3,
         activation='relu'
     ),
-
     tf.keras.layers.MaxPooling2D(),
 
     tf.keras.layers.Conv2D(
@@ -74,17 +65,16 @@ model = tf.keras.Sequential([
         3,
         activation='relu'
     ),
-
     tf.keras.layers.MaxPooling2D(),
 
     tf.keras.layers.GlobalAveragePooling2D(),
 
     tf.keras.layers.Dense(
-        128,
+        256,
         activation='relu'
     ),
 
-    tf.keras.layers.Dropout(0.5),
+    tf.keras.layers.Dropout(0.2), 
 
     tf.keras.layers.Dense(
         1,
@@ -107,10 +97,11 @@ early_stop = tf.keras.callbacks.EarlyStopping(
 history = model.fit(
     train_ds,
     validation_data=val_ds,
-    epochs=30,
+    epochs=20,
     callbacks=[early_stop]
 )
 
+# remove after check model
 loss, acc = model.evaluate(val_ds)
 
 print(f'loss : {loss} , acc : {acc}')
@@ -120,6 +111,8 @@ model.save("cats_vs_dogs.keras")
 print(history.history.keys())
 print(max(history.history['accuracy']))
 print(max(history.history['val_accuracy']))
+
+model.summary()
 
 # show accuracy 
 plt.plot(history.history['accuracy'])
