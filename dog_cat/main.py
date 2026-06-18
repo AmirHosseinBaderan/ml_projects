@@ -30,21 +30,20 @@ val_ds = tf.keras.utils.image_dataset_from_directory(
     batch_size=BATCH_SIZE
 )
 
-# check class 
-print(train_ds.class_names)
-for images,labels in train_ds.take(1):
-    print(images.shape)
-    print(labels.shape)
-    
-    # show one batch  
-    for i in range(9):
-        ax = plt.subplot(3,3,i + 1)
-        plt.imshow(images[i].numpy().astype('uint8'))
-        
-        plt.title(
-            train_ds.class_names[labels[i]]
-        )
-        
-        plt.axis("off")
-        
-plt.show()
+AUTOTUNE = tf.data.AUTOTUNE
+train_ds = train_ds.cache().shuffle(1000).prefetch(
+    buffer_size=AUTOTUNE
+)
+
+val_ds = val_ds.cache().prefetch(
+    buffer_size=AUTOTUNE
+)
+
+# normalize ds
+normalization_layer = tf.keras.layers.Rescaling(1.0/ 255)
+
+for images, labels in train_ds.take(1):
+    normalized = normalization_layer(images)
+
+    print(tf.reduce_min(normalized))
+    print(tf.reduce_max(normalized))
