@@ -1,6 +1,7 @@
 from pathlib import Path
 import matplotlib.pyplot as plt
 import tensorflow as tf
+from model_plt import show_model_plot
 
 base_dir = Path('./data')
 cat_dir = base_dir / 'train/cats/'
@@ -115,23 +116,4 @@ print(max(history.history['val_accuracy']))
 model.summary()
 
 # show accuracy 
-plt.plot(history.history['accuracy'])
-plt.plot(history.history['val_accuracy'])
-
-plt.title('Model Accuracy')
-plt.ylabel("Accuracy")
-plt.xlabel('Epoch')
-plt.legend(['Train','Validation'])
-
-plt.show()
-
-# show loss
-plt.plot(history.history['loss'])
-plt.plot(history.history['val_loss'])
-
-plt.title('Model Loss')
-plt.ylabel('Loss')
-plt.xlabel('Epoch')
-plt.legend(['Train', 'Validation'])
-
-plt.show()
+show_model_plot(history)
