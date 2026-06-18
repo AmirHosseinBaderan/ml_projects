@@ -1,6 +1,8 @@
 import tensorflow as tf
 from tensorflow.keras.datasets import mnist 
 from tensorflow.keras.utils import to_categorical
+import numpy as np
+import matplotlib.pyplot as plt
 
 # load dataset
 (x_train,y_train),(x_test,y_test) = mnist.load_data()
@@ -43,4 +45,10 @@ print(f"Accuracy : {accuracy}")
 
 # predict 
 prediction = model.predict(x_test)
-print(prediction[0])
+
+plt.title(label=f'Lable {y_test[0]}')
+plt.imshow(x_test[0],cmap=plt.get_cmap('gray_r'))
+plt.show()
+
+pred = np.argmax(prediction[0])
+print(f'Prediction : {pred}')
