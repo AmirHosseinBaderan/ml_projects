@@ -44,11 +44,21 @@ loss,accuracy = model.evaluate(x_test,y_test)
 print(f"Accuracy : {accuracy}")
 
 # predict 
-prediction = model.predict(x_test)
-
-plt.title(label=f'Lable {y_test[0]}')
-plt.imshow(x_test[0],cmap=plt.get_cmap('gray_r'))
-plt.show()
-
-pred = np.argmax(prediction[0])
-print(f'Prediction : {pred}')
+for i in range(200):
+    image = x_test[i]
+    label = np.argmax(y_test[i])
+    
+    prediction = model.predict(
+        image.reshape(1,28,28),
+        verbose=0
+    )
+    
+    pred_label = np.argmax(prediction[0])
+    
+    if pred_label != label:
+        plt.title(
+            f'Flase - Prediction : {pred_label} Label : {label}'
+        )
+        plt.imshow(image,cmap='gray_r')
+        
+        plt.show()
