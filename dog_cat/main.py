@@ -92,6 +92,8 @@ history = model.fit(
     epochs=5
 )
 
+model.save("cats_vs_dogs.keras")
+
 print(history.history.keys())
 
 # show accuracy 
