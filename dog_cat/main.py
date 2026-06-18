@@ -1,10 +1,9 @@
-import numpy as np
 import tensorflow as tf
 from tensorflow import keras
 from tensorflow.keras.preprocessing.image import ImageDataGenerator
-import cv2
 import os
-from predictor import predict_image
+from predictor import Predictor
+import sys
 
 img_size = (150, 150)
 batch_size = 32
@@ -76,17 +75,22 @@ else:
     print("Model saved!")
 
 
-# Prediction
-print(training_set.class_indices)
-
-
-
-
-result, score = predict_image(
-    model=model,
-    image_path="./data/test_set/cats/cat.4004.jpg",
-    img_size=img_size,
-    class_indices=training_set.class_indices
-)
-
-print(f"Prediction: {result} ({score})")
+if __name__ == "__main__":
+    if len(sys.argv) < 2:
+        print("Usage: python3 main.py <image_path | folder_path>")
+        sys.exit(1)
+        
+    predictor = Predictor(model,training_set.class_indices,img_size)
+    input_path = sys.argv[1]
+    if os.path.isdir(input_path):
+        print("Folder detected")
+        cat_count,dog_count = predictor.predict_folder(input_path)
+        print(f"Cat count : {cat_count} / Dog count {dog_count}")
+        
+    elif os.path.isfile(input_path):
+        print("Image detected")
+        result,_ = predictor.predict_image(input_path)
+        
+        print(f"Prediction : {result}")
+    else:
+        print("Invalid path")
