@@ -1,6 +1,4 @@
 import math
-import operator
-
 
 def euclidean_distance(x, y):
     n = len(x)
@@ -18,8 +16,8 @@ class KNNClassifier:
         self.k = k
 
     def fit(self, x_train, y_train):
-        self.x_train = x_train
-        self.y_train = y_train
+        self.x_train = x_train.to_numpy()
+        self.y_train = y_train.to_numpy()
 
     def predict(self, sample):
         items = []
@@ -40,6 +38,7 @@ class KNNClassifier:
 
     def predict_many(self,samples):
         predictions = []
-        for sample in samples:
-            predictions.append(self.predict(sample))
+        samples_numpy = samples.to_numpy()
+        for i in range(len(samples)):
+            predictions.append(self.predict(samples_numpy[i]))
         return predictions
