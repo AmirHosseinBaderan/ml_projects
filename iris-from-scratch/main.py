@@ -17,7 +17,7 @@ X_train,X_test,y_train,y_test = train_test_split(
     random_state=42
 )
 
-model = KNNClassifier(3)
+model = KNNClassifier(15)
 model.fit(X_train, y_train)
 
 # Accuracy
