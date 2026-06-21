@@ -37,3 +37,9 @@ class KNNClassifier:
             votes[label] = votes.get(label, 0) + 1
 
         return max(votes, key=votes.get)
+
+    def predict_many(self,samples):
+        predictions = []
+        for sample in samples:
+            predictions.append(self.predict(sample))
+        return predictions
