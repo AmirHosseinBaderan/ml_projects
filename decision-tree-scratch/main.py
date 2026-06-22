@@ -5,7 +5,7 @@ def gini(y):
     for label in y:
         counts[label] = counts.get(label, 0) + 1
 
-    impurity = 0
+    impurity = 1
     total = len(y)
 
     for label in counts:
