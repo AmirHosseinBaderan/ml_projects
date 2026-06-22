@@ -1,5 +1,20 @@
 import operator
-from sklearn.model_selection 
+from sklearn.model_selection import train_test_split
+import pandas as pd
+
+df = pd.read_csv("./data/iris.csv")
+
+# Features , Label
+X = df.drop(columns=["variety"])
+y = df["variety"]
+
+# train test split
+X_train,X_test,y_train,y_test = train_test_split(
+    X,
+    y,
+    test_size=0.2,
+    random_state=42
+)
 
 class DecisionNode:
     def __init__(self,feature_idx,threshold,left,right):
@@ -138,6 +153,22 @@ def predict(node, sample):
 
     return predict(node.right, sample)
 
+def predict_many(node, samples):
+    predictions = []
+    for sample in samples:
+        pred = predict(node, sample)
+        predictions.append(pred)
+
+    return predictions
+
+def accuracy(predictions, y):
+    correct = 0
+    for i in range(len(y)):
+        if y[i] == predictions[i]:
+            correct += 1
+
+    return correct / len(y)
+
 def print_tree(node, depth=0):
 
     prefix = "  " * depth
@@ -153,22 +184,9 @@ def print_tree(node, depth=0):
     print_tree(node.left, depth + 1)
     print_tree(node.right, depth + 1)
 
-X = [
-    [1],
-    [2],
-    [3],
-    [10],
-    [11],
-    [12]
-]
-
-y = [
-    "A",
-    "A",
-    "A",
-    "B",
-    "B",
-    "B"
-]
-tree = build_tree(X,y)
+tree = build_tree(X_train.to_numpy(),y_train.to_numpy())
 print_tree(tree)
+
+pred_list = predict_many(tree, X_test.to_numpy())
+acc = accuracy(pred_list, y_test.to_numpy())
+print(acc)
