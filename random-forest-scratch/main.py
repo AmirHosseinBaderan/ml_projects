@@ -1,3 +1,5 @@
+from collections import Counter
+
 import pandas as pd
 import numpy as np
 from sklearn.model_selection import train_test_split
@@ -22,33 +24,16 @@ print(f"Accuracy : {acc}")
 print(f"importance : {model.importance()}")
 model.info()
 
-n_features = X_train.shape[1]
+print(len(model.bootstrap_indices))
+print(model.bootstrap_indices[0][:20])
 
-forest_importance = np.zeros(n_features)
+used = set(model.bootstrap_indices[0])
 
-for tree, feature_idx in zip(
-    model.trees,
-    model.feature_subsets
-):
-    for idx, importance in zip(
-        feature_idx,
-        tree.feature_importances_
-    ):
-        forest_importance[idx] += importance
+all_idx = set(range(len(X_train)))
 
-forest_importance /= len(model.trees)
-print(forest_importance)
-feature_names = [
-    "sepal_length",
-    "sepal_width",
-    "petal_length",
-    "petal_width"
-]
+oob = all_idx - used
 
-for name, score in zip(
-    feature_names,
-    forest_importance
-):
-    print(
-        f"{name}: {score:.4f}"
-    )
+print("Used:", len(used))
+print("OOB:", len(oob))
+
+sample_idx = 0
