@@ -1,42 +1,36 @@
-from sklearn.naive_bayes import MultinomialNB
-
+from sklearn.feature_extraction.text import TfidfVectorizer
 from data import data
-from sklearn.feature_extraction.text import  CountVectorizer
+from sklearn.metrics.pairwise import cosine_similarity
+import numpy as np
 
-texts = [x[0] for x in data]
-labels = [x[1] for x in data]
+questions = [x[0] for x in data]
+answers = [x[1] for x in data]
 
-vectorizer = CountVectorizer()
-X = vectorizer.fit_transform(texts)
+vectorizer = TfidfVectorizer()
+X = vectorizer.fit_transform(questions)
 
-model = MultinomialNB()
-model.fit(X, labels)
 
-print("Chatbot is running... (type 'exit' to stop)")
+# chat bot function
+def get_response(user_input):
+    user_vec = vectorizer.transform([user_input])
+
+    similarities = cosine_similarity(user_vec, X)
+
+    best_idx = np.argmax(similarities)
+
+    if similarities[0][best_idx] < 0.2:
+        return "I dont understand"
+
+    return answers[best_idx]
+
+# chat bot loop
+print("Bot is running... (type exit to stop)")
 
 while True:
-    user_input = input("You: ")
+    msg = input("You: ")
 
-    if user_input == "exit":
+    if msg == "exit":
         break
 
-    x = vectorizer.transform([user_input])
-    intent = model.predict(x)[0]
-
-    if intent == "greeting":
-        print("Bot: Hello ")
-
-    elif intent == "goodbye":
-        print("Bot: Bye ")
-
-    elif intent == "thanks":
-        print("Bot: You're welcome ")
-
-    elif intent == "spam":
-        print("Bot:  suspicious message detected")
-
-    elif intent == "question":
-        print("Bot: I'm a simple ML bot ")
-
-    else:
-        print("Bot: I don't understand ")
+    response = get_response(msg)
+    print("Bot:", response)
