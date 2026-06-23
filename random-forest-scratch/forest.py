@@ -53,3 +53,23 @@ class RandomForest:
             final_preds.append(Counter(votes).most_common(1)[0][0])
 
         return np.array(final_preds)
+
+    def importance(self):
+        all_importances = []
+
+        for tree in self.trees:
+            all_importances.append(tree.feature_importances_)
+
+        res = np.mean(
+            all_importances,
+            axis=0
+        )
+
+        return res
+
+    def info(self):
+        print(len(self.trees))
+        print(self.feature_subsets[0])
+        print(
+            self.trees[0].feature_importances_
+        )

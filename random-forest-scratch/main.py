@@ -19,3 +19,36 @@ y_pred = model.predict(X_test)
 acc = np.mean(y_pred == y_test)
 
 print(f"Accuracy : {acc}")
+print(f"importance : {model.importance()}")
+model.info()
+
+n_features = X_train.shape[1]
+
+forest_importance = np.zeros(n_features)
+
+for tree, feature_idx in zip(
+    model.trees,
+    model.feature_subsets
+):
+    for idx, importance in zip(
+        feature_idx,
+        tree.feature_importances_
+    ):
+        forest_importance[idx] += importance
+
+forest_importance /= len(model.trees)
+print(forest_importance)
+feature_names = [
+    "sepal_length",
+    "sepal_width",
+    "petal_length",
+    "petal_width"
+]
+
+for name, score in zip(
+    feature_names,
+    forest_importance
+):
+    print(
+        f"{name}: {score:.4f}"
+    )
