@@ -50,3 +50,30 @@ class KMeans:
                 centroid.append(mean)
             centroids.append(centroid)
         self.centroids = centroids
+
+    def fit(self,X):
+        self.init_centroids(X)
+
+        for _ in range(self.max_iters):
+            old_centroids = self.centroids.copy()
+
+            clusters = self.assign_clusters(X)
+            self.update_centroids(clusters)
+
+            if old_centroids == self.centroids:
+                break
+
+    def predict(self,point):
+        distances = []
+
+        for centroid in self.centroids:
+            dist = euclidean_distance(
+                point,
+                centroid
+            )
+
+            distances.append(dist)
+
+        return distances.index(
+            min(distances)
+        )
