@@ -18,7 +18,7 @@ plt.grid(True)
 plt.show()
 
 model = DBSCAN(
-    eps=20,
+    eps=2,
     min_samples=2,
 )
 
