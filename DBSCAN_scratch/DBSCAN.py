@@ -14,6 +14,7 @@ class DBSCAN:
         self.eps = eps
         self.min_samples = min_samples
         self.labels = []
+        self.visited = []
 
     def region_query(self,X,point_index):
         point = X[point_index]
@@ -26,13 +27,62 @@ class DBSCAN:
 
         return neighbors
 
-
     def expand_cluster(self, X, point_index, neighbors, cluster_id):
-        pass
 
-    def fit(self,X):
-        pass
+        self.labels[point_index] = cluster_id
+
+        i = 0
+
+        while i < len(neighbors):
+
+            neighbor = neighbors[i]
+
+            if not self.visited[neighbor]:
+
+                self.visited[neighbor] = True
+
+                neighbor_neighbors = self.region_query(X, neighbor)
+
+                if len(neighbor_neighbors) >= self.min_samples:
+
+                    for new_neighbor in neighbor_neighbors:
+                        if new_neighbor not in neighbors:
+                            neighbors.append(new_neighbor)
+
+            if self.labels[neighbor] == -1:
+                self.labels[neighbor] = cluster_id
+
+            i += 1
+
+    def fit(self, X):
+
+        self.labels = [-1] * len(X)
+        self.visited = [False] * len(X)
+
+        cluster_id = 0
+
+        for point_index in range(len(X)):
+
+            if self.visited[point_index]:
+                continue
+
+            self.visited[point_index] = True
+
+            neighbors = self.region_query(X, point_index)
+
+            if len(neighbors) < self.min_samples:
+                continue
+
+            self.expand_cluster(
+                X,
+                point_index,
+                neighbors,
+                cluster_id
+            )
+
+            cluster_id += 1
 
     def fit_predict(self,X):
-        pass
+        self.fit(X)
+        return self.labels
 
