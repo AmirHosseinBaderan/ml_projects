@@ -60,3 +60,14 @@ class HierarchicalClustering:
             self.merge_clusters(i,j)
 
         return self.clusters
+
+    def get_labels(self, X):
+
+        labels = [-1] * len(X)
+
+        for cluster_index,cluster in enumerate(self.clusters):
+            for point in cluster:
+                sample_index = X.index(point)
+                labels[sample_index] = cluster_index
+
+        return labels
