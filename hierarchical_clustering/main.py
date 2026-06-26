@@ -12,4 +12,4 @@ X = [
 
 fit = model.fit(X, n_clusters=2)
 print(fit)
-print(model.get_labels(X))
+print(model.get_labels())
