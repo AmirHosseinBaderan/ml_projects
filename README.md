@@ -34,6 +34,7 @@ A collection of machine learning projects implemented in Python using scikit-lea
 ### Clustering
 - **[k_means](k_means/README.md)** - K-Means clustering using scikit-learn
 - **[k_means_from_scratch](k_means_from_scratch/README.md)** - K-Means clustering implemented from scratch
+- **[hierarchical_clustering](hierarchical_clustering/README.md)** - Hierarchical clustering implemented from scratch
 
 ## Requirements
 
