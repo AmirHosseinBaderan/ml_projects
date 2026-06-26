@@ -31,6 +31,10 @@ A collection of machine learning projects implemented in Python using scikit-lea
 ### Decision Trees
 - **[decision-tree-scratch](decision-tree-scratch/README.md)** - Decision tree implementation from scratch
 
+### Clustering
+- **[k_means](k_means/README.md)** - K-Means clustering using scikit-learn
+- **[k_means_from_scratch](k_means_from_scratch/README.md)** - K-Means clustering implemented from scratch
+
 ## Requirements
 
 All projects use Python with the following main dependencies:
