@@ -38,6 +38,9 @@ A collection of machine learning projects implemented in Python using scikit-lea
 - **[DBSCAN_sklearn](DBSCAN_sklearn/README.md)** - DBSCAN clustering using scikit-learn
 - **[DBSCAN_scratch](DBSCAN_scratch/README.md)** - DBSCAN clustering implemented from scratch
 
+### Anomaly Detection
+- **[anomaly](anomaly/README.md)** - Anomaly detection using Isolation Forest (from-scratch and sklearn implementations)
+
 ### Dimensionality Reduction
 - **[PCA](PCA/README.md)** - Principal Component Analysis (custom and sklearn implementations)
 
