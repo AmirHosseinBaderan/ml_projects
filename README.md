@@ -38,6 +38,9 @@ A collection of machine learning projects implemented in Python using scikit-lea
 - **[DBSCAN_sklearn](DBSCAN_sklearn/README.md)** - DBSCAN clustering using scikit-learn
 - **[DBSCAN_scratch](DBSCAN_scratch/README.md)** - DBSCAN clustering implemented from scratch
 
+### Dimensionality Reduction
+- **[PCA](PCA/README.md)** - Principal Component Analysis (custom and sklearn implementations)
+
 ## Requirements
 
 All projects use Python with the following main dependencies:
