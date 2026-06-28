@@ -7,15 +7,17 @@ class Neuron(Module):
     def __init__(
             self,
             input_size,
-            activation=Identity()
+            activation=None
     ):
         self.weights = [
             random.uniform(-1,1)
             for _ in range(input_size)
         ]
         self.bias = random.uniform(-1,1)
-        self.activation = activation
+        if activation is None:
+            activation = Identity()
 
+        self.activation = activation
         self.inputs = None
         self.z = None
         self.output = None
