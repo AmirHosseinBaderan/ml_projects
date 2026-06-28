@@ -1,5 +1,7 @@
 from network import Network
 from  layer import Layer
+from activations import Sigmoid
+from neuron import Neuron
 
 network = Network()
 
@@ -27,3 +29,9 @@ network.add(
 
 result = network.predict([1000, -500])
 print(result)
+
+neuron = Neuron(
+    input_size=2,
+    activation=Sigmoid()
+)
+print(neuron.forward([100,-200]))
