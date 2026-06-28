@@ -1,12 +1,16 @@
-inputs = [5, 8, 2]
-weights = [0.5, -0.4, 2]
+x = [5, 8, 2]
+w = [0.5, -0.4, 2]
+b = 3
 
-weighted_sum = 0
-bias = 3
 
-for i in range(len(inputs)):
-    weighted_sum += inputs[i] * weights[i]
+def neuron(inputs,weights,bias):
+    weighted_sum = 0
 
-z = weighted_sum + bias
+    for i in range(len(inputs)):
+        weighted_sum += inputs[i] * weights[i]
 
-print(z)
+    z = weighted_sum + bias
+    return z
+
+output = neuron(x, w, b)
+print(output)
