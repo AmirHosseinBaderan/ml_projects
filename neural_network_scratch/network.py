@@ -1,4 +1,3 @@
-from layer import Layer
 from module import Module
 
 class Network(Module):
@@ -9,7 +8,7 @@ class Network(Module):
         self.outputs = None
 
     def add(self,layer):
-        if not isinstance(layer, Layer):
+        if not isinstance(layer, Module):
             raise TypeError("layer must be an instance of Layer")
 
         self.layers.append(layer)
