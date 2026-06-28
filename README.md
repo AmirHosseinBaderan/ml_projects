@@ -16,6 +16,7 @@ A collection of machine learning projects implemented in Python using scikit-lea
 - **[tensorflow-mnist](tensorflow-mnist/README.md)** - MNIST digit recognition with TensorFlow
 - **[dog_cat](dog_cat/README.md)** - Dog vs cat image classification
 - **[neuron](neuron/README.md)** - Single artificial neuron implementation
+- **[perceptron](perceptron/README.md)** - Single-layer perceptron for binary classification
 
 ### Natural Language Processing
 - **[mini_chatbot](mini_chatbot/README.md)** - Simple rule-based chatbot using TF-IDF and cosine similarity
