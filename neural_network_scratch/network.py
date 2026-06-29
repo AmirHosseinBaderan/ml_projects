@@ -1,4 +1,6 @@
 from module import Module
+from losses import MSE
+
 
 class Network(Module):
 
@@ -6,6 +8,15 @@ class Network(Module):
         self.layers = []
         self.inputs = None
         self.outputs = None
+
+    def fit(
+            self,
+            x_train,
+            y_train,
+            epochs=100,
+            loss=MSE(),
+            optimizer=SGD
+    ):
 
     def add(self,layer):
         if not isinstance(layer, Module):
