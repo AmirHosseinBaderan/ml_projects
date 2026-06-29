@@ -28,17 +28,23 @@ The [`neuron`](mlp/main.py:1) function computes the weighted sum and applies act
 - **`bias`** — Bias term
 - **Returns** — Activated output (ReLU)
 
+The computation:
+```
+z = Σ(x_i × w_i) + bias
+output = activation(z)
+```
+
 ### Activation Function
 
-The [`activation`](mlp/main.py:11) function implements ReLU:
+The [`activation`](mlp/main.py:11) function implements ReLU (Rectified Linear Unit):
 - Returns `z` if `z >= 0`
 - Returns `0` otherwise
 
 ### Forward Function
 
 The [`forward`](mlp/main.py:21) function performs forward propagation:
-1. Computes hidden layer outputs using 2 neurons
-2. Passes hidden outputs to the output neuron
+1. Computes hidden layer outputs using 2 neurons with ReLU activation
+2. Passes hidden outputs to the output neuron (no activation)
 3. Returns both hidden and final outputs
 
 ## How to Run

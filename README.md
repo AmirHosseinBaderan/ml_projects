@@ -17,6 +17,8 @@ A collection of machine learning projects implemented in Python using scikit-lea
 - **[dog_cat](dog_cat/README.md)** - Dog vs cat image classification
 - **[neuron](neuron/README.md)** - Single artificial neuron implementation
 - **[perceptron](perceptron/README.md)** - Single-layer perceptron for binary classification
+- **[mlp](mlp/README.md)** - Multi-layer perceptron with forward propagation
+- **[neural_network_scratch](neural_network_scratch/README.md)** - Complete neural network library from scratch
 
 ### Natural Language Processing
 - **[mini_chatbot](mini_chatbot/README.md)** - Simple rule-based chatbot using TF-IDF and cosine similarity
