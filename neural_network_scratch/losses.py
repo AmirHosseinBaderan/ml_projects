@@ -18,7 +18,16 @@ class Loss(ABC):
 
 class MSE(Loss):
 
+    def __init__(self):
+        super().__init__()
+        self.value = None
+        self.prediction = None
+        self.target = None
+
     def forward(self, prediction, target):
+        if len(prediction) != len(target):
+            raise ValueError("prediction and target must have the same length")
+
         self.prediction = prediction
         self.target = target
 
