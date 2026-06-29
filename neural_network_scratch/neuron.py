@@ -1,26 +1,29 @@
 import random
 from module import Module
 from activations import Identity
+from initializer import  RandomUniformInitializer
 
 
 class Neuron(Module):
     def __init__(
             self,
             input_size,
-            activation=None
+            activation=None,
+            initializer=None,
     ):
-        self.weights = [
-            random.uniform(-1,1)
-            for _ in range(input_size)
-        ]
-        self.bias = random.uniform(-1,1)
+        self.bias = random.uniform(-1, 1)
         if activation is None:
             activation = Identity()
 
+        if initializer is None:
+            initializer = RandomUniformInitializer()
+
+        self.initializer = initializer
         self.activation = activation
         self.inputs = None
         self.z = None
         self.output = None
+        self.weights = self.initializer.initialize(input_size)
 
     def forward(self, inputs):
         self.inputs = inputs
@@ -38,4 +41,3 @@ class Neuron(Module):
             weighted_sum += x * w
 
         return weighted_sum + self.bias
-
