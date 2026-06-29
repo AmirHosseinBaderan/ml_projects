@@ -11,7 +11,6 @@ class Neuron(Module):
             activation=None,
             initializer=None,
     ):
-        self.bias = random.uniform(-1, 1)
         if activation is None:
             activation = Identity()
 
@@ -23,7 +22,8 @@ class Neuron(Module):
         self.inputs = None
         self.z = None
         self.output = None
-        self.weights = self.initializer.initialize(input_size)
+        self.weights = self.initializer.initialize_weights(input_size)
+        self.bias = self.initializer.initialize_bias()
 
     def forward(self, inputs):
         self.inputs = inputs
