@@ -1,4 +1,5 @@
 from abc import ABC, abstractmethod
+import random
 
 
 class Initializer(ABC):
@@ -12,11 +13,15 @@ class Initializer(ABC):
         pass
 
 class RandomUniformInitializer(Initializer):
-    def initialize_weights(self,input_size):
-        pass
+
+    def initialize_weights(self, input_size):
+        return [
+            random.uniform(-1, 1)
+            for _ in range(input_size)
+        ]
 
     def initialize_bias(self):
-        pass
+        return random.uniform(-1, 1)
 
 class XavierInitializer(Initializer):
     def initialize_weights(self, input_size):

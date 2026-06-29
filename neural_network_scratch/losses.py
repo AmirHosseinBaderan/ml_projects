@@ -20,9 +20,6 @@ class MSE(Loss):
 
     def __init__(self):
         super().__init__()
-        self.value = None
-        self.prediction = None
-        self.target = None
 
     def forward(self, prediction, target):
         if len(prediction) != len(target):
