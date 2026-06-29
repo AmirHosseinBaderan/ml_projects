@@ -24,6 +24,9 @@ class Neuron(Module):
         self.output = None
         self.weights = self.initializer.initialize_weights(input_size)
         self.bias = self.initializer.initialize_bias()
+        self.delta = None
+        self.weight_gradients = []
+        self.bias_gradients = None
 
     def forward(self, inputs):
         self.inputs = inputs
