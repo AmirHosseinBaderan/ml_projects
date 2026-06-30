@@ -1,75 +1,43 @@
-import numpy as np
-import matplotlib.pyplot as plt
+from functions.quadratic_2d import Quadratic2D
+from optimizers.sgd import SGD
+from optimizer.runner.optimizer_runner import OptimizerRunner
+from optimizers.momentum import Momentum
 
-from optimizer.optimizers.momentum import Momentum
-from optimizer.optimizers.sgd import SGD
+from visualizers.visualizer import Visualizer
+from visualizers.function1d_visualizer import Function1DVisualizer
 
-optimizer = SGD(learning_rate=0.1)
-
-x = np.array([8.0])
-
-history = []
-
-for _ in range(20):
-
-    history.append(x.copy())
-
-    gradient = 2 * x
-
-    x = optimizer.step(x, gradient)
-
-x_values = np.linspace(-8,8,300)
-
-y = x_values ** 2
-
-plt.figure(figsize=(10,5))
-
-plt.plot(x_values,y)
-
-points = np.array(history)
-
-plt.scatter(
-    points,
-    points**2,
-    color="red"
-)
-
-plt.show()
-
-optimizer = Momentum(
-    learning_rate=0.1,
-    momentum=0.9
-)
-
-x = np.array([8.0])
-
-history = []
-
-for _ in range(20):
-
-    history.append(x.copy())
-
-    gradient = 2*x
-
-    x = optimizer.step(
-        x,
-        gradient
+def run(
+    optimizer,
+    function,
+    start,
+    iterations=20,
+):
+    runner = OptimizerRunner(
+        optimizer=optimizer,
+        function=function,
     )
 
-x_values = np.linspace(-8,8,300)
+    result = runner.run(
+        start=start,
+        iterations=iterations,
+    )
 
-y = x_values ** 2
+    Visualizer().plot_loss(result)
+    Visualizer().plot_weight(result)
 
-plt.figure(figsize=(10,5))
+    if len(start) == 1:
+        Function1DVisualizer().plot(function, result)
 
-plt.plot(x_values,y)
-
-points = np.array(history)
-
-plt.scatter(
-    points,
-    points**2,
-    color="red"
+run(
+    optimizer=SGD(0.1),
+    function=Quadratic2D(),
+    start=[8, 8],
 )
-
-plt.show()
+run(
+    Momentum(
+        learning_rate=0.1,
+        momentum=0.9
+    ),
+    function=Quadratic2D(),
+    start=[8, 8],
+)
