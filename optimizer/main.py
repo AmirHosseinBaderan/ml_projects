@@ -1,16 +1,18 @@
 from functions.quadratic_2d import Quadratic2D
+from optimizers.rms_prop import RMSProp
 from optimizers.sgd import SGD
-from optimizer.runner.optimizer_runner import OptimizerRunner
+from runner.optimizer_runner import OptimizerRunner
 from optimizers.momentum import Momentum
 
 from visualizers.visualizer import Visualizer
 from visualizers.function1d_visualizer import Function1DVisualizer
 
+
 def run(
-    optimizer,
-    function,
-    start,
-    iterations=20,
+        optimizer,
+        function,
+        start,
+        iterations=20,
 ):
     runner = OptimizerRunner(
         optimizer=optimizer,
@@ -28,6 +30,7 @@ def run(
     if len(start) == 1:
         Function1DVisualizer().plot(function, result)
 
+
 run(
     optimizer=SGD(0.1),
     function=Quadratic2D(),
@@ -38,6 +41,11 @@ run(
         learning_rate=0.1,
         momentum=0.9
     ),
+    function=Quadratic2D(),
+    start=[8, 8],
+)
+run(
+    RMSProp(),
     function=Quadratic2D(),
     start=[8, 8],
 )
