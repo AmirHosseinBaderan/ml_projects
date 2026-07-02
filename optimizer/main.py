@@ -1,11 +1,14 @@
 from functions.quadratic_2d import Quadratic2D
 from optimizers.rms_prop import RMSProp
+from optimizers.adam import  Adam
 from optimizers.sgd import SGD
 from runner.optimizer_runner import OptimizerRunner
 from optimizers.momentum import Momentum
 
 from visualizers.visualizer import Visualizer
 from visualizers.function1d_visualizer import Function1DVisualizer
+
+import matplotlib.pyplot as plt
 
 
 def run(
@@ -24,6 +27,7 @@ def run(
         iterations=iterations,
     )
 
+    plt.title(type(optimizer).__name__)
     Visualizer().plot_loss(result)
     Visualizer().plot_weight(result)
 
@@ -46,6 +50,12 @@ run(
 )
 run(
     RMSProp(),
+    function=Quadratic2D(),
+    start=[8, 8],
+)
+
+run(
+    Adam(),
     function=Quadratic2D(),
     start=[8, 8],
 )
