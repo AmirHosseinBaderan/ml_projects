@@ -19,6 +19,7 @@ A collection of machine learning projects implemented in Python using scikit-lea
 - **[perceptron](perceptron/README.md)** - Single-layer perceptron for binary classification
 - **[mlp](mlp/README.md)** - Multi-layer perceptron with forward propagation
 - **[neural_network_scratch](neural_network_scratch/README.md)** - Complete neural network library from scratch
+- **[optimizer](optimizer/README.md)** - Optimization algorithms (SGD, Momentum, RMSProp, Adam) with visualizations
 
 ### Natural Language Processing
 - **[mini_chatbot](mini_chatbot/README.md)** - Simple rule-based chatbot using TF-IDF and cosine similarity
