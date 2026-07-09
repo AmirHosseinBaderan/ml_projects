@@ -45,9 +45,54 @@ kernel = np.array([
     [0, 1, 0],
     [1, 0, 1]
 ])
-print("Kernel")
-print(kernel)
-print("-" * 20)
+
+vertical_kernel = np.array([
+    [-1, 0, 1],
+    [-1, 0, 1],
+    [-1, 0, 1]
+])
+
+horizontal_kernel = np.array([
+    [ 1, 1, 1],
+    [ 0, 0, 0],
+    [-1,-1,-1]
+])
+
+blur_kernel = np.array([
+    [1,1,1],
+    [1,1,1],
+    [1,1,1]
+]) / 9
+
+sharpen_kernel = np.array([
+    [ 0,-1, 0],
+    [-1, 5,-1],
+    [ 0,-1, 0]
+])
 
 fm = convolution2d(image, kernel)
+vfm = convolution2d(image, vertical_kernel)
+hfm = convolution2d(image, horizontal_kernel)
+bfm = convolution2d(image, blur_kernel)
+sfm = convolution2d(image, sharpen_kernel)
+
+print("-" * 20)
+print("Kernel")
 print(fm)
+
+print("-" * 20)
+print("Vertical kernel")
+print(vfm)
+
+print("-" * 20)
+print("Horizontal kernel")
+print(hfm)
+
+print("-" * 20)
+print("Blur kernel")
+print(bfm)
+
+print("-" * 20)
+print("Sharpen kernel")
+print(sfm)
+
