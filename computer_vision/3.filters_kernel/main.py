@@ -70,29 +70,20 @@ sharpen_kernel = np.array([
     [ 0,-1, 0]
 ])
 
-fm = convolution2d(image, kernel)
-vfm = convolution2d(image, vertical_kernel)
-hfm = convolution2d(image, horizontal_kernel)
-bfm = convolution2d(image, blur_kernel)
-sfm = convolution2d(image, sharpen_kernel)
 
-print("-" * 20)
-print("Kernel")
-print(fm)
+kernels = {
+    "Vertical": vertical_kernel,
+    "Horizontal": horizontal_kernel,
+    "Blur": blur_kernel,
+    "Sharpen": sharpen_kernel
+}
 
-print("-" * 20)
-print("Vertical kernel")
-print(vfm)
+for name, kernel in kernels.items():
 
-print("-" * 20)
-print("Horizontal kernel")
-print(hfm)
+    print("=" * 40)
+    print(name)
+    print("=" * 40)
 
-print("-" * 20)
-print("Blur kernel")
-print(bfm)
+    feature_map = convolution2d(image, kernel)
 
-print("-" * 20)
-print("Sharpen kernel")
-print(sfm)
-
+    print(feature_map)
